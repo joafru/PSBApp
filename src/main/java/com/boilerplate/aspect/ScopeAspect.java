@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * AOP aspect that enforces {@link ScopeAllowed}.
@@ -26,6 +27,7 @@ import java.util.List;
 @Component
 @Slf4j
 public class ScopeAspect {
+    private static String ADMIN_SCOPE = "admin";
 
     @Before("@annotation(com.boilerplate.annotation.ScopeAllowed) || @within(com.boilerplate.annotation.ScopeAllowed)")
     public void validateScope(JoinPoint joinPoint) {
@@ -43,8 +45,9 @@ public class ScopeAspect {
 
         String[] required = scopeAllowed.value();
         boolean hasScope = Arrays.stream(required).anyMatch(userScopes::contains);
+        boolean isAdmin = Stream.of(ADMIN_SCOPE).anyMatch(userScopes::contains);
 
-        if (!hasScope) {
+        if (!(isAdmin || hasScope)){
             log.warn("Access denied for '{}'. Required: {} | Has: {}",
                     auth.getName(), Arrays.toString(required), userScopes);
             throw new ForbiddenException(

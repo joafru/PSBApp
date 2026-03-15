@@ -1,19 +1,16 @@
 spring:
   application:
-    name: spring-boot-boilerplate
-
-  jackson:
-    default-property-inclusion: non_null
+    name: PSBApp
 
   datasource:
-    url: jdbc:mysql://localhost:3306/boilerplate_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/psbapp?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: ${DDL_AUTO:validate}   # 'validate' on production — never drops/alters tables
+      ddl-auto: ${DDL_AUTO:update}   # 'validate' on production — never drops/alters tables
                                        # set to 'update' only on first run to create the schema
     show-sql: false
     defer-datasource-initialization: true  # run data.sql AFTER Hibernate creates the tables
