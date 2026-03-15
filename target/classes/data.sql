@@ -7,4 +7,5 @@ VALUES
     ('user.read',   'Read user data'),
     ('user.write',  'Create and update users'),
     ('user.delete', 'Delete users'),
-    ('admin',       'Full administrative access');
+    ('admin',       'Full administrative access'),
+    ('home.echo',   'Access the echo endpoint');

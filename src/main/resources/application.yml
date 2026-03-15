@@ -13,7 +13,8 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${DDL_AUTO:validate}   # 'validate' on production — never drops/alters tables
+                                       # set to 'update' only on first run to create the schema
     show-sql: false
     defer-datasource-initialization: true  # run data.sql AFTER Hibernate creates the tables
     properties:

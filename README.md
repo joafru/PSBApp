@@ -27,8 +27,10 @@ com.boilerplate
 ├── auth                AuthController, AuthService, dto/
 ├── client              BaseWebClientService, ExternalApiClient
 ├── config              ApplicationConfig, WebClientConfig
+├── discord             DiscordClient, DiscordService, dto/
 ├── exception           GlobalExceptionHandler, exceptions, ErrorResponseDTO
 ├── filter              JwtAuthenticationFilter
+├── home                HomeController, dto/
 ├── scope               Scope (entity), ScopeRepository, ScopeService
 ├── security            JwtService, SecurityConfig
 └── user                User (entity), UserRepository, UserService, UserController, dto/
@@ -113,6 +115,23 @@ GET /auth/me
 Authorization: Bearer <token>
 ```
 
+### Home (protected)
+
+```http
+GET /home/echo?message=hello
+Authorization: Bearer <token>
+# Requires scope: home.echo
+```
+
+**Response:**
+```json
+{
+  "echo": "hello",
+  "received_from": "john",
+  "timestamp": "2024-01-15T10:30:00"
+}
+```
+
 ### Users (protected)
 
 ```http
@@ -145,6 +164,43 @@ public List<UserResponseDTO> list() { ... }
 ```
 
 The `ScopeAspect` intercepts the call and throws `403 Forbidden` if the token does not contain any of the required scopes.
+
+---
+
+## Discord integration
+
+Sends messages to a Discord channel via an incoming webhook.
+
+### Configuration
+
+```yaml
+app:
+  discord:
+    webhook-url: ${DISCORD_WEBHOOK_URL:https://discord.com/api/webhooks/YOUR_ID/YOUR_TOKEN}
+    username: ${DISCORD_USERNAME:Boilerplate Bot}
+```
+
+> To get a webhook URL: Discord server settings → Integrations → Webhooks → New Webhook → Copy URL.
+
+### Usage
+
+```java
+// Plain text
+discordService.sendSimpleMessage("Server started!");
+
+// Rich embed
+discordService.sendEmbed(DiscordEmbedDTO.builder()
+    .title("New user registered")
+    .description("john@example.com just signed up")
+    .color(5814783)   // #58B9FF
+    .build());
+
+// Embed with fields
+discordService.sendInfoEmbed("Deployment complete", 3066993,
+    DiscordEmbedFieldDTO.builder().name("Version").value("1.2.0").inline(true).build(),
+    DiscordEmbedFieldDTO.builder().name("Env").value("Production").inline(true).build()
+);
+```
 
 ---
 
@@ -190,3 +246,24 @@ public class PaymentApiClient extends BaseWebClientService {
 | `user.write` | Create and update users |
 | `user.delete` | Delete users |
 | `admin` | Full administrative access |
+| `home.echo` | Access the echo endpoint |
+
+---
+
+## Tests
+
+Integration tests run against an in-memory H2 database (MySQL compatibility mode) — your production MySQL is never touched.
+
+```bash
+mvn test
+```
+
+| Test | Description |
+|---|---|
+| `register_shouldReturn201WithToken` | Register returns 201 + JWT |
+| `login_shouldReturn200WithToken` | Login returns 200 + JWT |
+| `login_shouldReturn401OnWrongPassword` | Wrong password returns 401 |
+| `echo_shouldReturn200WithEchoedMessage` | Echo endpoint returns message + username |
+| `echo_shouldReturn403WithoutToken` | No token returns 403 |
+| `echo_shouldReturn403WithoutRequiredScope` | Missing scope returns 403 |
+| `fullFlow_registerLoginAndConsumeEcho` | Full register → login → echo flow |

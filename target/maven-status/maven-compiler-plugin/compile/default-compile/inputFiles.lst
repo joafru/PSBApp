@@ -8,6 +8,7 @@ C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\au
 C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\exception\ForbiddenException.java
 C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\scope\ScopeService.java
 C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\client\ExternalApiClient.java
+C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\home\dto\EchoResponseDTO.java
 C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\BoilerplateApplication.java
 C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\security\SecurityConfig.java
 C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\filter\JwtAuthenticationFilter.java
@@ -20,6 +21,7 @@ C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\us
 C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\discord\DiscordClient.java
 C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\user\UserRepository.java
 C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\user\dto\UserResponseDTO.java
+C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\home\HomeController.java
 C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\auth\AuthService.java
 C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\config\ApplicationConfig.java
 C:\Users\User\workspace\spring-boot-boilerplate\src\main\java\com\boilerplate\exception\UnauthorizedException.java
