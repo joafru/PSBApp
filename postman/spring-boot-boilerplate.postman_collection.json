@@ -1,0 +1,249 @@
+{
+  "info": {
+    "name": "Spring Boot Boilerplate",
+    "description": "REST API collection for the Spring Boot Boilerplate — JWT auth, Scopes, Users.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"john\",\n  \"email\": \"john@example.com\",\n  \"password\": \"secret123\",\n  \"scopes\": [\"user.read\", \"user.write\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Create a new user account. Optionally assign scopes from the seed list: user.read, user.write, user.delete, admin."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('token', json.access_token);",
+                  "    console.log('Token saved:', json.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiJ9...\",\n  \"expiration\": 86400000,\n  \"user\": {\n    \"id\": 1,\n    \"username\": \"john\",\n    \"email\": \"john@example.com\",\n    \"enabled\": true,\n    \"created_at\": \"2024-01-15T10:00:00\",\n    \"scopes\": [\"user.read\", \"user.write\"]\n  }\n}"
+            },
+            {
+              "name": "400 Validation Error",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": 400,\n  \"error\": \"Bad Request\",\n  \"message\": \"Validation failed\",\n  \"path\": \"/auth/register\",\n  \"timestamp\": \"2024-01-15T10:00:00\",\n  \"field_errors\": {\n    \"email\": \"Email must be a valid address\",\n    \"password\": \"Password must be at least 8 characters\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"john\",\n  \"password\": \"secret123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticate with username and password. The JWT token is automatically saved to the {{token}} collection variable."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('token', json.access_token);",
+                  "    console.log('Token saved:', json.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiJ9...\",\n  \"expiration\": 86400000,\n  \"user\": {\n    \"id\": 1,\n    \"username\": \"john\",\n    \"email\": \"john@example.com\",\n    \"enabled\": true,\n    \"created_at\": \"2024-01-15T10:00:00\",\n    \"scopes\": [\"user.read\", \"user.write\"]\n  }\n}"
+            },
+            {
+              "name": "401 Invalid Credentials",
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": 401,\n  \"error\": \"Unauthorized\",\n  \"message\": \"Invalid credentials\",\n  \"path\": \"/auth/login\",\n  \"timestamp\": \"2024-01-15T10:00:00\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Me (current user)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Returns the currently authenticated user. Requires a valid JWT token."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": 1,\n  \"username\": \"john\",\n  \"email\": \"john@example.com\",\n  \"enabled\": true,\n  \"created_at\": \"2024-01-15T10:00:00\",\n  \"scopes\": [\"user.read\", \"user.write\"]\n}"
+            },
+            {
+              "name": "401 Missing or invalid token",
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": 401,\n  \"error\": \"Unauthorized\",\n  \"message\": \"Full authentication is required to access this resource\",\n  \"path\": \"/auth/me\",\n  \"timestamp\": \"2024-01-15T10:00:00\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get all users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": ["{{base_url}}"],
+              "path": ["users"]
+            },
+            "description": "Returns all users. Requires a valid JWT token AND the scope 'user.read'."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  {\n    \"id\": 1,\n    \"username\": \"john\",\n    \"email\": \"john@example.com\",\n    \"enabled\": true,\n    \"created_at\": \"2024-01-15T10:00:00\",\n    \"scopes\": [\"user.read\", \"user.write\"]\n  }\n]"
+            },
+            {
+              "name": "403 Insufficient scopes",
+              "status": "Forbidden",
+              "code": 403,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": 403,\n  \"error\": \"Forbidden\",\n  \"message\": \"Insufficient scopes. Required one of: [user.read]\",\n  \"path\": \"/users\",\n  \"timestamp\": \"2024-01-15T10:00:00\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get user by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/1",
+              "host": ["{{base_url}}"],
+              "path": ["users", "1"]
+            },
+            "description": "Returns a single user by ID. Requires a valid JWT token AND the scope 'user.read'."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": 1,\n  \"username\": \"john\",\n  \"email\": \"john@example.com\",\n  \"enabled\": true,\n  \"created_at\": \"2024-01-15T10:00:00\",\n  \"scopes\": [\"user.read\", \"user.write\"]\n}"
+            },
+            {
+              "name": "500 User not found",
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": 500,\n  \"error\": \"Internal Server Error\",\n  \"message\": \"User not found: 99\",\n  \"path\": \"/users/99\",\n  \"timestamp\": \"2024-01-15T10:00:00\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  }
+}
