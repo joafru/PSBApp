@@ -12,7 +12,7 @@
     </parent>
 
     <groupId>com.boilerplate</groupId>
-    <artifactId>spring-boot-boilerplate</artifactId>
+    <artifactId>PSBApp</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
@@ -85,6 +85,11 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.17.0</version>
         </dependency>
 
         <!-- ── Test ── -->

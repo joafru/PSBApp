@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.boilerplate.home.HomeControllerTest
--------------------------------------------------------------------------------
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.394 s -- in com.boilerplate.home.HomeControllerTest
